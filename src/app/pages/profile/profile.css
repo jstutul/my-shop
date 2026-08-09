@@ -1,0 +1,19 @@
+a{
+    cursor: pointer;
+}
+.card {
+    transition: all .25s ease;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 .75rem 1.5rem rgba(0,0,0,.08);
+}
+
+.border-dashed {
+    border-style: dashed !important;
+}
+
+.dropdown-toggle::after {
+    display: none;
+}

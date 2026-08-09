@@ -1,0 +1,84 @@
+/* General Container */
+.checkout-container {
+  background-color: #f8f9fa;
+  min-height: 100vh;
+}
+
+/* Form Styling */
+.section-card {
+  background: white;
+  border-radius: 12px;
+  padding: 25px;
+  border: 1px solid #eef0f2;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 10px;
+}
+
+.step-number {
+  width: 30px;
+  height: 30px;
+  background: #0d6efd;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+/* Payment Method Selection */
+.payment-options {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.payment-card-option {
+  border: 2px solid #eee;
+  border-radius: 8px;
+  padding: 15px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.payment-card-option:hover {
+  border-color: #0d6efd;
+  background: #f0f7ff;
+}
+
+.payment-card-option.active {
+  border-color: #0d6efd;
+  background: #e7f1ff;
+  color: #0d6efd;
+  box-shadow: 0 0 0 1px #0d6efd;
+}
+
+/* Summary Card */
+.cart-items-list {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.extra-small {
+  font-size: 0.75rem;
+}
+
+/* Custom Input Focus */
+.form-control:focus {
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+  border-color: #0d6efd;
+}

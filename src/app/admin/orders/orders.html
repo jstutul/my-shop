@@ -1,0 +1,283 @@
+<div class="container-fluid">
+
+  <!-- Page Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+      <h4 class="fw-bold mb-1">Orders</h4>
+      <p class="text-muted mb-0">
+        Manage your store order
+      </p>
+    </div>
+  </div>
+
+  <!-- Product Card -->
+  <div class="card border-0 shadow-sm">
+    <!-- Search / Filter -->
+    <div class="card-header bg-white border-bottom p-3">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <div class="input-group">
+            <span class="input-group-text bg-white">
+              <i class="bi bi-search"></i>
+            </span>
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Search products..."
+              [ngModel]="searchQuery()" (ngModelChange)="searchQuery.set($event);resetPage()"
+              >
+          </div>
+        </div>
+        <div class="col-md-2">
+            <input type="date" class="form-control" 
+            [ngModel]="fromDate()" (ngModelChange)="fromDate.set($event);resetPage()">
+        </div>
+        <div class="col-md-2">
+            <input type="date" class="form-control"
+            [ngModel]="toDate()" (ngModelChange)="toDate.set($event);resetPage()">
+        </div>
+        <div class="col-md-2">
+          <select class="form-select" [ngModel]="selectedStatus()" (ngModelChange)="selectedStatus.set($event);resetPage()">
+            <option value="">All </option>
+            <option value="pending">Pending</option>
+            <option value="confirmed">Confirmed</option>
+            <option value="shipped">Shipped</option>
+            <option value="delivered">Delivered</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <!-- Product Table -->
+    <div class="table-responsive">
+      <table class="table align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th style="width:70px">#</th>
+            <th>Order No</th>
+            <th>Order By</th>
+            <th>Order Date</th>
+            <th>Qty</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th class="text-end">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+
+        @if (paginatedOrders().length > 0) {
+            @for (order of paginatedOrders(); track order.orderNo; let i = $index) {
+              <tr>
+                <td>{{i+1}}</td>
+                <td>{{ order.orderNo }}</td>
+                <td>{{ order.orderBy }}</td>
+                <td><span class="fw-semibold">{{ order.orderDate | date:'dd MMM yyyy' }}</span></td>
+                <td><span class="fw-semibold">{{ order.orderQuantity}}</span></td>
+                <td><span class="fw-semibold">{{ order.totalAmount | currency}}</span></td>
+                
+                <td>
+                   <span class="badge badge-{{order.status.toLowerCase()}} px-3 py-2 rounded-pill">{{order.status}}</span>
+                </td>
+                <td class="text-end">
+                  <div class="d-flex justify-content-end gap-2">
+                    <button
+                      class="btn btn-sm btn-outline-primary"
+                      title="Action" (click)="openOrderModal(order)">
+                      <i class="bi bi-pencil"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+        } @else {
+            <tr>
+              <td colspan="7">
+                <div class="text-center py-5">
+                  <i class="bi bi-box-seam display-5 text-muted"></i>
+                  <h6 class="mt-3">
+                    No products found
+                  </h6>
+                  <p class="text-muted mb-3">
+                    Start by adding your first product.
+                  </p>
+                  <button
+                    class="btn btn-primary"
+                    >
+                    <i class="bi bi-plus-lg me-2"></i>
+                    Add Product
+                  </button>
+                </div>
+              </td>
+            </tr>
+        }
+        </tbody>
+      </table>
+    </div>
+    <!-- Pagination -->
+    <div class="card-footer bg-white">
+      <div class="d-flex justify-content-between align-items-center">
+        <small class="text-muted">
+          Showing {{ orders().length }} products
+        </small>
+        <nav class="mt-5 d-flex justify-content-center">
+            <ul class="pagination">
+            <li class="page-item" [class.disabled]="currentPage()===1">
+                <button class="page-link" (click)="currentPage.set(currentPage()-1)">&laquo;</button>
+            </li>
+            <li class="page-item active">
+                <span class="page-link">{{currentPage()}}</span>
+            </li>
+            <li class="page-item" [class.disabled]="currentPage()>= totalPages()">
+                <button class="page-link" 
+                (click)="currentPage.set(currentPage() + 1)"
+                 [disabled]="currentPage() >= totalPages()">&raquo;</button>
+                </li>
+            </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ================= PRODUCT MODAL ================= -->
+
+<div
+  class="modal fade"
+  id="orderModal"
+  tabindex="-1"
+  aria-labelledby="orderModalLabel"
+  aria-hidden="true">
+
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <!-- Header -->
+            <div class="modal-header px-4 py-3">
+                <div>
+                    <h5 class="modal-title fw-bold mb-1" id="orderModalLabel"> Order Details</h5>
+                    @if (selectedOrder()) {
+                        <small class="text-muted">
+                        {{ selectedOrder()?.orderNo }}
+                        </small>
+                    }
+                </div>
+            </div>
+            <!-- Body -->
+            <div class="modal-body">
+                @if (selectedOrder()) {
+                <div class="px-4 pt-4">
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-4">
+                            <div class="order-info-box">
+                                <small class="text-muted d-block mb-1">Customer</small>
+                                <div class="fw-semibold">
+                                {{ selectedOrder()?.orderBy }}
+                                </div>
+                                @if (selectedOrder()?.email) {
+                                <small class="text-muted">
+                                    {{ selectedOrder()?.email}}
+                                </small>
+                                }
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="order-info-box">
+                                <small class="text-muted d-block mb-1">
+                                Order Date
+                                </small>
+
+                                <div class="fw-semibold">
+                                {{ selectedOrder()?.orderDate | date:'dd MMM yyyy, hh:mm a' }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="order-info-box">
+                                <small class="text-muted d-block mb-1">Order Status</small>
+                                <span [class]="getStatusClass(selectedOrder()?.status)">
+                                    {{ selectedOrder()?.status }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Products -->
+                    <div class="border rounded-3 overflow-hidden mb-4">
+                        <div class="bg-light px-3 py-3">
+                            <h6 class="fw-bold mb-0">Order Items</h6>
+                        </div>
+                        @for (item of selectedOrder()?.items; track item.productId) 
+                        {
+                            <div class="d-flex align-items-center gap-3 p-3 border-top">
+                                <img
+                                [src]="baseImageUrl + item.imageUrl"
+                                class="order-product-image"
+                                alt="{{ item.productName }}">
+                                <div class="flex-grow-1">
+                                    <div class="fw-semibold">{{ item.productName }} </div>
+                                    <small class="text-muted">Quantity: {{ item.quantity }}</small>
+                                </div>
+                                <div class="text-end">
+                                    <div class="fw-semibold"> {{ item.unitPrice | currency }}</div>
+                                    <small class="text-muted">
+                                        {{ item.quantity }} ×
+                                        {{ item.unitPrice | currency }}
+                                    </small>
+                                </div>
+                            </div>
+                        } 
+                   
+                        <!-- Total -->
+                        <div class="border-top bg-light p-3">
+
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted"> Subtotal </span>
+                                <span>{{ selectedOrder()?.totalAmount | currency }} </span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span class="fw-bold">Total</span>
+                                <span class="fw-bold fs-5 text-primary">{{ selectedOrder()?.totalAmount | currency }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="status-update-box mb-4">
+                        <div class="d-flex align-items-center gap-2 mb-3">
+                            <i class="bi bi-arrow-repeat text-primary"></i>
+                            <h6 class="fw-bold mb-0">Update Order Status</h6>
+                         </div>
+                        <div class="row g-2" >
+                            <div class="col-md-8">
+                                <select class="form-select" name="orderSatus" [ngModel]="newOrderStatus()" (ngModelChange)="newOrderStatus.set($event)" >
+                                    <option value="">Select Status</option>
+                                    <option value="Confirmed">Confirmed</option>
+                                    <option value="Processing">Processing</option>
+                                    <option value="Shipped">Shipped</option>
+                                    <option value="Delivered">Delivered</option>
+                                    <option value="Cancelled">Cancelled </option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <button
+                                (click)="updateOrderStatus()"
+                                class="btn btn-primary w-100">
+                                <i class="bi bi-check2 me-1"></i>
+                                Update Status
+                                </button>
+                            </div>
+                          </div>
+                    </div>
+                </div>
+            }
+            <div class="modal-footer px-4">
+                <button
+                type="button"
+                class="btn btn-outline-secondary"
+                data-bs-dismiss="modal"
+                (click)="removeFocus($event)">
+                Close
+            </button>
+            </div>
+        </div>
+    </div>
+</div>
+

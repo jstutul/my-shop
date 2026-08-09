@@ -1,0 +1,39 @@
+.product-image {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.table > :not(caption) > * > * {
+  padding: 14px 12px;
+}
+
+.table thead th {
+  font-size: 12px;
+  font-weight: 600;
+  color: #667085;
+  text-transform: uppercase;
+  letter-spacing: .3px;
+}
+
+.table tbody tr {
+  transition: background .15s ease;
+}
+
+.table tbody tr:hover {
+  background: #f8fafc;
+}
+
+.modal-header {
+  padding: 20px 24px;
+}
+
+.modal-body {
+  padding: 24px;
+}
+
+.modal-footer {
+  padding: 16px 24px;
+}

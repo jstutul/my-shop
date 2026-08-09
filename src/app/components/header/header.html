@@ -1,0 +1,38 @@
+
+<!-- ── Navbar ─────────────────────────────────────────── -->
+<nav class="navbar navbar-expand-lg sticky-top">
+  <div class="container">
+    <a class="navbar-brand" routerLink="/">ShopHub</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navMenu">
+      <ul class="navbar-nav me-auto ms-4">
+        <li class="nav-item"><a class="nav-link active" routerLink="/">Home</a></li>
+        <li class="nav-item"><a class="nav-link" routerLink="shop">Shop</a></li>
+      </ul>
+      <div class="d-flex align-items-center gap-3">
+        <a routerLink="/cart" class="cart-icon-wrap text-dark">
+          <i class="bi bi-bag fs-5"></i>
+           @if (cartService.totalItems() > 0) {
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+              {{ cartService.totalItems() }}
+            </span>
+          }
+        </a>
+        @if(authState.isAdmin()){
+          <a routerLink="/admin" class="text-dark"><i class="bi bi-person-circle fs-5"></i></a>
+        }@else{
+          <a routerLink="/profile" class="text-dark"><i class="bi bi-person-circle fs-5"></i></a>
+        }
+        
+        @if(authState.isLoggedIn()){
+          <span class="fw-semibold">{{ authState.fullName() }}</span>
+          <a (click)="logout()" class="btn btn-outline-danger btn-sm">Log out</a>
+        }@else {
+          <a routerLink="/login" class="btn btn-outline-primary btn-sm">Login</a>
+        }
+      </div>
+    </div>
+  </div>
+</nav>

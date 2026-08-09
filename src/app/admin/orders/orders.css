@@ -1,0 +1,22 @@
+.order-info-box {
+  background: #f8f9fa;
+  border: 1px solid #edf0f3;
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+
+.order-product-image {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 9px;
+  border: 1px solid #e9ecef;
+  flex-shrink: 0;
+}
+
+.status-update-box {
+  background: #f8faff;
+  border: 1px solid #e4ebf7;
+  border-radius: 10px;
+  padding: 18px;
+}

@@ -1,0 +1,99 @@
+
+<div class="container py-5">
+@if (isLoading()) {
+  <div class="container text-center py-5">
+    <div class="spinner-border text-primary"></div>
+    <p>Loading product details...</p>
+  </div>
+} @else if (product()) {
+  <nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a routerLink="/">Home</a></li>
+      <li class="breadcrumb-item"><a routerLink="/shop">Shop</a></li>
+      <li class="breadcrumb-item active">{{product()?.name}}</li>
+    </ol>
+  </nav>
+
+  <div class="row g-5">
+
+    <!-- Product image -->
+    <div class="col-md-6">
+      <div class="card p-3 mb-3">
+        <img [src]="baseImageUrl+product()?.imageUrl" class="img-fluid rounded-3" id="mainImg" alt="Headphones" style="max-height:420px;object-fit:cover;width:100%;" />
+      </div>
+      <div class="d-flex gap-2">
+        <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200&q=80" class="img-thumbnail" style="width:80px;height:80px;object-fit:cover;cursor:pointer;" onclick="document.getElementById('mainImg').src=this.src.replace('200','800')" alt="" />
+        <img src="https://images.unsplash.com/photo-1484704849700-f032a568e944?w=200&q=80" class="img-thumbnail" style="width:80px;height:80px;object-fit:cover;cursor:pointer;" onclick="document.getElementById('mainImg').src=this.src.replace('200','800')" alt="" />
+        <img src="https://images.unsplash.com/photo-1583394838336-acd977736f90?w=200&q=80" class="img-thumbnail" style="width:80px;height:80px;object-fit:cover;cursor:pointer;" onclick="document.getElementById('mainImg').src=this.src.replace('200','800')" alt="" />
+      </div>
+    </div>
+
+    <!-- Product info -->
+    <div class="col-md-6">
+      <span class="badge bg-danger mb-2">Sale</span>
+      <h1 class="h2 fw-bold mb-2">{{product()?.name}}</h1>
+      <div class="d-flex align-items-center gap-3 mb-3">
+        <span class="text-success small fw-bold"><i class="bi bi-check-circle-fill"></i> In Stock</span>
+      </div>
+
+      <div class="mb-3">
+        <span class="original-price"> {{ ((product()?.price ?? 0) + 10) | currency }}</span>
+        <span class="price">{{product()?.price | currency }}</span>
+        <span class="badge bg-danger ms-2">Save 10%</span>
+      </div>
+
+      <div [innerHTML]="product()?.description"></div> 
+
+      <!-- Quantity -->
+      <div class="mb-4">
+        <label class="form-label fw-bold">Quantity</label>
+        <div class="input-group" style="width:140px">
+          <button class="btn btn-outline-secondary qty-minus" type="button" (click)="decrementQty()">−</button>
+          <input type="number" class="form-control text-center qty-input" [value]="quantity()"
+  (input)="onQuantityChange($event)"min="1" max="10" />
+          <button class="btn btn-outline-secondary qty-plus"  type="button" (click)="incrementQty()">+</button>
+        </div>
+      </div>
+
+      <!-- CTA buttons -->
+      <div class="d-flex gap-3 mb-4 flex-wrap">
+        <button (click)="addToCart()" class="btn btn-primary btn-lg px-5 flex-grow-1 btn-add-to-cart" data-id="1" data-name="Wireless Headphones" data-price="89.99" data-img="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=80">
+          <i class="bi bi-bag-plus me-2"></i>Add to Cart
+        </button>
+        <a routerLink="/checkout" class="btn btn-outline-primary btn-lg flex-grow-1">Buy Now</a>
+      </div>
+
+      <!-- Delivery info -->
+      <div class="card p-3">
+        <div class="d-flex gap-3 align-items-start mb-3">
+          <i class="bi bi-truck text-primary fs-4 flex-shrink-0"></i>
+          <div><strong>Free Delivery</strong><p class="mb-0 small text-muted">Order over $50 — estimated 3–5 business days</p></div>
+        </div>
+        <div class="d-flex gap-3 align-items-start">
+          <i class="bi bi-arrow-return-left text-primary fs-4 flex-shrink-0"></i>
+          <div><strong>Free Returns</strong><p class="mb-0 small text-muted">30-day hassle-free return policy</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+}
+
+  <!-- Related products -->
+  <div class="mt-5">
+    <h3 class="fw-bold mb-4">You May Also Like</h3>
+    <div class="row g-4">
+      @if(semilerProduct().length>0){
+        @for(pro of semilerProduct();track pro.id){
+          <div class="col-6 col-md-3" >
+            <a class="card product-card h-100" [routerLink]="['/product', pro.id]">
+              <img [src]="baseImageUrl+pro.imageUrl" class="card-img-top" alt="{{pro.name}}" />
+              <div class="card-body"><p class="text-muted small mb-1">{{pro.category.name}}</p>
+                <h6 class="fw-bold">{{pro.name}}</h6>
+                <span class="price">{{pro.price|currency}}</span></div>
+              </a>
+          </div>
+        }
+      }
+    </div>
+  </div>
+</div>

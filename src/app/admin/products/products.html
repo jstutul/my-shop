@@ -1,0 +1,331 @@
+<div class="container-fluid">
+
+  <!-- Page Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+      <h4 class="fw-bold mb-1">Products</h4>
+      <p class="text-muted mb-0">
+        Manage your store products
+      </p>
+    </div>
+    <button
+      type="button"
+      class="btn btn-primary" (click)="openAddProduct()">
+      <i class="bi bi-plus-lg me-2"></i>
+      Add Product
+    </button>
+  </div>
+
+
+  <!-- Product Card -->
+  <div class="card border-0 shadow-sm">
+    <!-- Search / Filter -->
+    <div class="card-header bg-white border-bottom p-3">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <div class="input-group">
+            <span class="input-group-text bg-white">
+              <i class="bi bi-search"></i>
+            </span>
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Search products..."
+              [ngModel]="searchQuery()" (ngModelChange)="searchQuery.set($event);resetPage()"
+              >
+          </div>
+        </div>
+        <div class="col-md-3">
+          <select class="form-select" [ngModel]="selectedCategory()" (ngModelChange)="selectedCategory.set($event);resetPage()">
+            <option  [ngValue]="0">All Categories</option> 
+            @for (category of categories(); track category.id) {
+                <option [ngValue]="category.id">
+                {{ category.name }}
+                </option>
+            }
+          </select>
+        </div>
+        <div class="col-md-3">
+          <select class="form-select" [ngModel]="selectedStock()" (ngModelChange)="selectedStock.set($event);resetPage()">
+            <option value="">All Stock</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <!-- Product Table -->
+    <div class="table-responsive">
+      <table class="table align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th style="width:70px">#</th>
+            <th>Product</th>
+            <th>Category</th>
+            <th>Price</th>
+            <th>Stock</th>
+            <th>Status</th>
+            <th class="text-end">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+
+        @if (paginatedProducts().length > 0) {
+            @for (product of paginatedProducts(); track product.id; let i = $index) {
+              <tr>
+                <td>{{i+1}}</td>
+                <td>
+                    <div class="d-flex align-items-center gap-3">
+                        <img
+                            [src]="baseImageUrl+product.imageUrl"
+                            class="product-image"
+                            alt="{{product.name}}"
+                        >
+                        <div class="fw-semibold">{{product.name}}</div>
+                    </div>
+                </td>
+                <td>{{ product.category.name }}</td>
+                <td><span class="fw-semibold">{{ product.price | currency }}</span></td>
+                <td>
+                    @if (product.stockQuantity > 0) {
+                        <span class="badge bg-success-subtle text-success">
+                        {{ product.stockQuantity }}
+                        </span>
+                    } @else {
+                        <span class="badge bg-danger-subtle text-danger">
+                        Out of Stock
+                        </span>
+                    }
+                </td>
+                <td>
+                  <span class="badge bg-success-subtle text-success">Active</span>
+                </td>
+                <td class="text-end">
+                  <div class="d-flex justify-content-end gap-2">
+                    <button
+                      class="btn btn-sm btn-outline-primary"
+                      title="Edit" 
+                       (click)="openEditProduct(product)">
+                      <i class="bi bi-pencil"></i>
+                    </button>
+                    <button
+                      class="btn btn-sm btn-outline-danger"
+                      title="Delete"
+                      (click)="deleteProduct(product.id)">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+        } @else {
+            <tr>
+              <td colspan="7">
+                <div class="text-center py-5">
+                  <i class="bi bi-box-seam display-5 text-muted"></i>
+                  <h6 class="mt-3">
+                    No products found
+                  </h6>
+                  <p class="text-muted mb-3">
+                    Start by adding your first product.
+                  </p>
+                  <button
+                    class="btn btn-primary"
+                    >
+                    <i class="bi bi-plus-lg me-2"></i>
+                    Add Product
+                  </button>
+                </div>
+              </td>
+            </tr>
+        }
+        </tbody>
+      </table>
+    </div>
+    <!-- Pagination -->
+    <div class="card-footer bg-white">
+      <div class="d-flex justify-content-between align-items-center">
+        <small class="text-muted">
+          Showing {{ products().length }} products
+        </small>
+        <nav class="mt-5 d-flex justify-content-center">
+            <ul class="pagination">
+            <li class="page-item" [class.disabled]="currentPage()===1">
+                <button class="page-link" (click)="currentPage.set(currentPage()-1)">&laquo;</button>
+            </li>
+            <li class="page-item active">
+                <span class="page-link">{{currentPage()}}</span>
+            </li>
+            <li class="page-item" [class.disabled]="currentPage()>= totalPages()">
+                <button class="page-link" 
+                (click)="currentPage.set(currentPage() + 1)"
+                 [disabled]="currentPage() >= totalPages()">&raquo;</button>
+                </li>
+            </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- ================= PRODUCT MODAL ================= -->
+
+<div
+  class="modal fade"
+  id="productModal"
+  tabindex="-1"
+  aria-labelledby="productModalLabel"
+  aria-hidden="true">
+
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <!-- Header -->
+            <div class="modal-header">
+                <h5 class="modal-title" id="productModalLabel">
+                {{ editingProduct() ? 'Edit Product' : 'Add Product' }}
+                </h5>
+
+                <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal">
+                </button>
+            </div>
+
+            <!-- Body -->
+            <div class="modal-body">
+
+                <form  [formGroup]="productForm" (ngSubmit)="saveProduct()" >
+                    <div class="row g-3">
+                        <div class="col-md-8">
+                            <label class="form-label">Product Name</label>
+                            <input type="text" class="form-control"
+                                formControlName="name"
+                                [class.is-invalid]="productForm.get('name')?.invalid && productForm.get('name')?.touched"
+                                placeholder="Enter product name"
+                            >
+                            @if (productForm.get('name')?.touched &&productForm.get('name')?.invalid) 
+                            {
+                                <small class="text-danger">Product name is required</small>
+                            }
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Category</label>
+                            <select class="form-select" 
+                                    formControlName="categoryId"
+                                    [class.is-invalid]="productForm.get('categoryId')?.invalid && productForm.get('categoryId')?.touched">
+                               <!-- Use [ngValue] for the default option too -->
+                                <option [ngValue]="'0'">Select Category</option>
+                                
+                                @for (category of categories(); track category.id) {
+                                    <!-- Ensure category.id is the same type as the form value (Number) -->
+                                    <option [ngValue]="category.id">
+                                    {{ category.name }}
+                                    </option>
+                                }
+                            </select>
+                            @if (productForm.get('categoryId')?.invalid && productForm.get('categoryId')?.touched) {
+                                <div class="invalid-feedback">Please select a valid category.</div>
+                            }
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label class="form-label">Price</label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input
+                                type="number"
+                                class="form-control"
+                                formControlName="price"
+                                [class.is-invalid]="productForm.get('price')?.invalid && productForm.get('price')?.touched"
+                                 placeholder="Enter Product Price">
+                            </div>
+                            @if (productForm.get('price')?.invalid && productForm.get('price')?.touched) {
+                                <div class="invalid-feedback">Please Enter a valid price.</div>
+                            }
+                        </div>
+                        @if (!editingProduct()) {
+                        <div class="col-md-6">
+                            <label class="form-label">Initial Stock</label>
+                            <input type="number" class="form-control" 
+                                formControlName="initialStock" 
+                                [class.is-invalid]="productForm.get('initialStock')?.invalid && productForm.get('initialStock')?.touched"
+                                placeholder="Enter stock quantity">
+                            
+                            @if (productForm.get('initialStock')?.invalid && productForm.get('initialStock')?.touched) {
+                            <div class="invalid-feedback">
+                                @if (productForm.get('initialStock')?.errors?.['required']) { Stock is required. }
+                                @if (productForm.get('initialStock')?.errors?.['min']) { Stock cannot be negative. }
+                            </div>
+                            }
+                        </div>
+                        }
+                        <div class="col-md-12">
+                        <label class="form-label">Product Image</label>
+                        
+                        <!-- Image Preview Container -->
+                        <div class="mb-3">
+                            @if (imagePreview()) {
+                                <div class="position-relative d-inline-block">
+                                    <img [src]="imagePreview()" 
+                                        class="rounded border" 
+                                        style="width: 100px; height: 100px; object-fit: cover;">
+                                    <button type="button" 
+                                            class="btn btn-danger btn-sm position-absolute top-0 start-100 translate-middle rounded-circle" 
+                                            (click)="removeImage()" 
+                                            style="width: 24px; height: 24px; padding: 0; line-height: 1;">
+                                        <i class="bi bi-x"></i>
+                                    </button>
+                                </div>
+                            } @else {
+                                <div class="bg-light d-flex align-items-center justify-content-center rounded border" 
+                                    style="width: 100px; height: 100px; color: #adb5bd;">
+                                    <i class="bi bi-image fs-2"></i>
+                                </div>
+                            }
+                        </div>
+
+                        <input type="file" class="form-control" 
+                            [class.is-invalid]="productForm.get('imageUrl')?.invalid && productForm.get('imageUrl')?.touched"
+                            accept="image/*" 
+                            (change)="onImageSelected($event)">
+                            
+                        @if (productForm.get('imageUrl')?.invalid && productForm.get('imageUrl')?.touched) {
+                            <div class="invalid-feedback">
+                                Please upload a product image.
+                            </div>
+                        }
+                    </div>
+                        <div class="col-md-12">
+                            <label class="form-label">Description</label>
+                           <quill-editor class="w-100 h-50"
+                            formControlName="description" 
+                            [class.is-invalid]="productForm.get('description')?.invalid && productForm.get('description')?.touched"
+                            [modules]="{
+                                toolbar: [
+                                    ['bold', 'italic', 'underline'],  
+                                    [{ 'list': 'ordered'}, { 'list': 'bullet' }], 
+                                    ['link', 'clean']                
+                                ]
+                            }">
+                        </quill-editor>
+                            @if (productForm.get('description')?.invalid && productForm.get('description')?.touched) {
+                                <div class="invalid-feedback">
+                                Description is required.
+                                </div>
+                            }
+                        </div>
+                        
+                        <div class="mb-3 text-center">
+                            <button type="button" class="btn btn-outline-secondary mx-2" (click)="closeModal()">Cancel</button>
+                            <button type="submit" class="btn btn-primary" >
+                                {{ editingProduct() ? 'Update' : 'Save' }}
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+

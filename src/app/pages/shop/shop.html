@@ -1,0 +1,144 @@
+
+<!-- ── Page header ────────────────────────────────────── -->
+<div class="bg-white border-bottom py-4">
+  <div class="container">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb mb-1">
+        <li class="breadcrumb-item"><a routerLink="/">Home</a></li>
+        <li class="breadcrumb-item active">Shop</li>
+      </ol>
+    </nav>
+    <h1 class="h3 mb-0 fw-bold">All Products</h1>
+  </div>
+</div>
+
+<!-- ── Main content ───────────────────────────────────── -->
+<div class="container py-5">
+  <div class="row g-4">
+
+    <!-- Sidebar filters -->
+    <div class="col-lg-3">
+
+      <!-- Search -->
+      <div class="filter-section mb-3">
+        <div class="input-group">
+          <input type="search" [ngModel]="searchQuery()" (ngModelChange)="searchQuery.set($event);resetPage()" class="form-control" placeholder="Search products…" />
+        </div>
+      </div>
+
+      <!-- Categories -->
+      <div class="filter-section mb-3">
+        <div class="filter-title">Category</div>
+        <div class="form-check mb-2">
+          <input class="form-check-input" type="radio" name="category" id="catAll"
+            [checked]="selectedCategory()===null" 
+            (change)="selectedCategory.set(null);resetPage();"
+           />
+          <label class="form-check-label" for="catAll">All Categories</label>
+        </div>
+        @for(cat of categories();track cat.id){
+          <div class="form-check mb-2">
+          <input class="form-check-input" type="radio" name="category" [id]="'cat'+cat.id" 
+          [checked]="selectedCategory()===cat.id" 
+          (change)="selectedCategory.set(cat.id);resetPage();"
+          />
+          <label class="form-check-label" [for]="'cat'+cat.id">{{cat.name}}</label>
+        </div>
+        }
+      </div>
+
+      <!-- Price Range -->
+      <div class="filter-section mb-3">
+        <div class="filter-title">Price Range</div>
+        <label class="form-label small text-muted">$0 – {{maxPrice()|currency}}</label>
+        <input type="range" class="form-range" min="0" max="1200" step="10" [value]="maxPrice()" (input)="onPriceChange($event)" />
+        <div class="d-flex gap-2 mt-2">
+          <input type="number" class="form-control form-control-sm" placeholder="Min" value="0" />
+          <input type="number" class="form-control form-control-sm" placeholder="Max" [value]="maxPrice()" (input)="maxPrice.set(+$event.target.value);resetPage()" />
+        </div>
+      </div>
+      <button class="btn btn-primary w-100" (click)="resetPage()">Apply Filters</button>
+    </div>
+
+    <!-- Product grid -->
+    <div class="col-lg-9">
+
+      <!-- Toolbar -->
+      <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <p class="mb-0 text-muted small">Showing <strong>{{filterProduct().length}}</strong> products</p>
+        <div class="d-flex gap-2 align-items-center">
+          <label class="form-label mb-0 small fw-bold">Sort:</label>
+          <select class="form-select form-select-sm" style="width:auto" [ngModel]="sortOrder()" (ngModelChange)="sortOrder.set($event);resetPage()">
+            <option value="low-to-high">Price: Low to High</option>
+            <option value="high-to-low">Price: High to Low</option>
+          </select>
+          <div class="btn-group btn-group-sm">
+            <button class="btn" 
+                  [class.btn-primary]="viewMode() === 'grid'" 
+                  [class.btn-outline-secondary]="viewMode() !== 'grid'" 
+                  (click)="setViewMode('grid')">
+            <i class="bi bi-grid-3x3-gap"></i>
+          </button>
+          
+          <!-- List Button: becomes btn-primary when active -->
+          <button class="btn" 
+                  [class.btn-primary]="viewMode() === 'list'" 
+                  [class.btn-outline-secondary]="viewMode() !== 'list'" 
+                  (click)="setViewMode('list')">
+            <i class="bi bi-list"></i>
+          </button>
+          </div>
+        </div>
+      </div>
+        @if (isLoading()) {
+        <div class="row g-4">
+          @for (i of [1,2,3,4,5,6]; track i) {
+            <div class="col-6 col-md-4">
+              <div class="card product-card h-100 skeleton-pulse" style="min-height: 350px;"></div>
+            </div>
+          }
+        </div>
+      } @else {
+
+      <div class="row g-4">
+        @for (prod of paginatedProducts(); track prod.id) {
+          <div [class]="viewMode() === 'grid' ? 'col-6 col-md-4' : 'col-12'">
+            <div class="card product-card h-100" [class.list-view]="viewMode() === 'list'">
+              @if(prod.price < 50) { <span class="product-badge badge-sale">Sale</span> }
+              <a [routerLink]="['/product', prod.id]">
+                <img [src]="baseImageUrl+prod.imageUrl" class="card-img-top" alt="{{prod.name}}" /></a>
+              <div class="card-body d-flex flex-column">
+                <p class="text-muted small mb-1">{{prod.category.name}}</p>
+                <h6 class="card-title fw-bold">
+                  <a [routerLink]="['/product', prod.id]" class="text-dark text-decoration-none">{{prod.name}}</a></h6>
+                <div class="mt-auto"><span class="original-price">{{prod.price+10|currency}}</span><span class="price">{{prod.price|currency}}</span>
+                <button class="btn btn-primary btn-sm w-100 mt-2 btn-add-to-cart" (click)="addToCart(prod)">Add to Cart</button></div>
+              </div>
+            </div>
+          </div>
+        }@empty {
+            <div class="col-12 text-center py-5">
+              <h4 class="text-muted">No products match your filters.</h4>
+            </div>
+          }
+      </div>
+    }
+
+      <!-- Pagination -->
+      <nav class="mt-5 d-flex justify-content-center">
+        <ul class="pagination">
+          <li class="page-item" [class.disabled]="currentPage()===1">
+            <button class="page-link" (click)="currentPage.set(currentPage()-1)">&laquo;</button>
+          </li>
+          <li class="page-item active">
+            <span class="page-link">{{currentPage()}}</span>
+          </li>
+           <li class="page-item" [class.disabled]="paginatedProducts().length < pageSize">
+              <button class="page-link" (click)="currentPage.set(currentPage() + 1)">&raquo;</button>
+            </li>
+        </ul>
+      </nav>
+
+    </div>
+  </div>
+</div>

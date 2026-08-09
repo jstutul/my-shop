@@ -1,0 +1,114 @@
+<div class="admin-layout">
+  <!-- ================= SIDEBAR ================= -->
+  <aside class="admin-sidebar">
+    <!-- Logo -->
+    <div class="sidebar-logo">
+      <div class="logo-icon">
+        <i class="bi bi-bag-check-fill"></i>
+      </div>
+      <span>MyShop</span>
+    </div>
+    <!-- Navigation -->
+    <nav class="sidebar-nav">
+      <div class="nav-section-title">
+        MAIN MENU
+      </div>
+      <a
+        routerLink="/admin/dashboard"
+        routerLinkActive="active"
+        class="sidebar-link">
+        <i class="bi bi-grid-1x2"></i>
+        <span>Dashboard</span>
+      </a>
+      <a
+        routerLink="/admin/products"
+        routerLinkActive="active"
+        class="sidebar-link">
+        <i class="bi bi-box-seam"></i>
+        <span>Products</span>
+      </a>
+      <a
+        routerLink="/admin/categories"
+        routerLinkActive="active"
+        class="sidebar-link">
+        <i class="bi bi-tags"></i>
+        <span>Categories</span>
+      </a>
+      <a
+        routerLink="/admin/orders"
+        routerLinkActive="active"
+        class="sidebar-link">
+        <i class="bi bi-cart3"></i>
+        <span>Orders</span>
+      </a>
+      <a
+        routerLink="/admin/customers"
+        routerLinkActive="active"
+        class="sidebar-link">
+        <i class="bi bi-people"></i>
+        <span>Customers</span>
+      </a>
+      <div class="sidebar-divider"></div>
+      <div class="nav-section-title"> SYSTEM</div>
+      <a routerLink="/" class="sidebar-link"><i class="bi bi-shop"></i><span>View Shop</span></a>
+    </nav>
+    <!-- Bottom -->
+    <div class="sidebar-bottom">
+      <div class="admin-profile">
+        <div class="admin-avatar">
+          {{ userState.fullName().charAt(0) }}
+        </div>
+        <div class="admin-info">
+          <strong>
+            {{ userState.fullName() }}
+          </strong>
+          <small>
+            Administrator
+          </small>
+        </div>
+      </div>
+      <button
+        class="logout-button"
+        (click)="logout()">
+        <i class="bi bi-box-arrow-right"></i>
+        <span>Logout</span>
+      </button>
+    </div>
+  </aside>
+  <!-- ================= MAIN ================= -->
+
+  <main class="admin-main">
+    <!-- Topbar -->
+    <header class="admin-topbar">
+      <div class="topbar-left">
+        <button class="mobile-menu">
+          <i class="bi bi-list"></i>
+        </button>
+        <div>
+          <h5 class="mb-0">Admin Panel</h5>
+          <small class="text-muted">Manage your store</small>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <!-- User -->
+        <div class="topbar-user">
+          <div class="topbar-avatar">
+            {{ userState.fullName().charAt(0) }}
+          </div>
+          <div class="topbar-user-info text-center">
+            <strong>
+              {{ userState.fullName() }}
+            </strong>
+            <small>
+              {{userState.roles()}}
+            </small>
+          </div>
+        </div>
+      </div>
+    </header>
+    <!-- Page Content -->
+    <section class="admin-content">
+      <router-outlet></router-outlet>
+    </section>
+  </main>
+</div>

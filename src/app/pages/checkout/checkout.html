@@ -1,0 +1,134 @@
+<div class="checkout-container container py-5">
+  <!-- Page Header -->
+  <div class="row mb-5">
+    <div class="col-12">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a routerLink="/">Home</a></li>
+          <li class="breadcrumb-item"><a routerLink="/shop">Shop</a></li>
+          <li class="breadcrumb-item active">Checkout</li>
+        </ol>
+      </nav>
+      <h1 class="fw-bold">Checkout</h1>
+      <p class="text-muted">Please enter your shipping and payment details to complete your order.</p>
+    </div>
+  </div>
+
+  <div class="row g-5">
+    <!-- LEFT COLUMN: CUSTOMER INFO FORM -->
+    <div class="col-lg-8">
+      <div class="checkout-form-wrapper">
+        
+        <!-- Shipping Section -->
+        <div class="section-card mb-4">
+          <div class="section-header">
+            <div class="step-number">1</div>
+            <h5 class="mb-0">Shipping Information</h5>
+          </div>
+          
+          <form #checkoutForm="ngForm" class="row g-3 mt-3">
+            <div class="col-md-6">
+              <label class="form-label small fw-bold text-uppercase text-muted">Full Name</label>
+              <input type="text" class="form-control form-control-lg" [(ngModel)]="customer.fullName" name="fullName" placeholder="John Doe" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label small fw-bold text-uppercase text-muted">Email Address</label>
+              <input type="email" class="form-control form-control-lg" [(ngModel)]="customer.email" name="email" placeholder="john@example.com" required>
+            </div>
+            <div class="col-12">
+              <label class="form-label small fw-bold text-uppercase text-muted">Shipping Address</label>
+              <input type="text" class="form-control form-control-lg" [(ngModel)]="customer.address" name="address" placeholder="123 Main St, Apartment 4B" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label small fw-bold text-uppercase text-muted">City</label>
+              <input type="text" class="form-control form-control-lg" [(ngModel)]="customer.city" name="city" placeholder="New York" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label small fw-bold text-uppercase text-muted">Zip Code</label>
+              <input type="text" class="form-control form-control-lg" [(ngModel)]="customer.zipCode" name="zip" placeholder="10001" required>
+            </div>
+          </form>
+        </div>
+
+        <!-- Payment Section -->
+        <div class="section-card mb-4">
+          <div class="section-header">
+            <div class="step-number">2</div>
+            <h5 class="mb-0">Payment Method</h5>
+          </div>
+          
+          <div class="payment-options mt-3">
+            <div class="payment-card-option" [class.active]="customer.paymentMethod === 'CreditCard'" (click)="customer.paymentMethod = 'CreditCard'">
+              <input type="radio" name="pay" [checked]="customer.paymentMethod === 'CreditCard'" class="d-none">
+              <i class="bi bi-credit-card fs-3"></i>
+              <span>Credit Card</span>
+            </div>
+            <div class="payment-card-option" [class.active]="customer.paymentMethod === 'PayPal'" (click)="customer.paymentMethod = 'PayPal'">
+              <input type="radio" name="pay" [checked]="customer.paymentMethod === 'PayPal'" class="d-none">
+              <i class="bi bi-paypal fs-3"></i>
+              <span>PayPal</span>
+            </div>
+            <div class="payment-card-option" [class.active]="customer.paymentMethod === 'COD'" (click)="customer.paymentMethod = 'COD'">
+              <input type="radio" name="pay" [checked]="customer.paymentMethod === 'COD'" class="d-none">
+              <i class="bi bi-cash-coin fs-3"></i>
+              <span>Cash on Delivery</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Button -->
+        <div class="text-end mt-4">
+          <button (click)="processOrder()" [disabled]="isProcessing()" class="btn btn-primary btn-lg px-5 py-3 fw-bold shadow">
+            @if (isProcessing()) {
+              <span class="spinner-border spinner-border-sm me-2"></span> Processing...
+            } @else {
+              Complete Purchase <i class="bi bi-arrow-right ms-2"></i>
+            }
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN: ORDER SUMMARY -->
+    <div class="col-lg-4">
+      <div class="sticky-top" style="top: 20px;">
+        <div class="card border-0 shadow-sm overflow-hidden">
+          <div class="card-header bg-dark text-white py-3">
+            <h5 class="mb-0">Order Summary</h5>
+          </div>
+          <div class="card-body p-0">
+            <!-- Items List -->
+            <div class="cart-items-list p-3">
+              @for (item of cartService.items(); track item.productId) {
+                <div class="d-flex align-items-center gap-3 mb-3">
+                  <img [src]="baseImageUrl + item.imageUrl" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
+                  <div class="flex-grow-1">
+                    <div class="fw-bold small">{{item.name}}</div>
+                    <div class="text-muted extra-small">Qty: {{item.quantity}}</div>
+                  </div>
+                  <span class="fw-bold small">{{ item.price * item.quantity | currency }}</span>
+                </div>
+              }
+            </div>
+
+            <!-- Pricing -->
+            <div class="p-3 border-top bg-light">
+              <div class="d-flex justify-content-between mb-2">
+                <span class="text-muted">Subtotal</span>
+                <span class="fw-bold">{{ cartService.totalPrice() | currency }}</span>
+              </div>
+              <div class="d-flex justify-content-between mb-2">
+                <span class="text-muted">Shipping</span>
+                <span class="text-success fw-bold">FREE</span>
+              </div>
+              <div class="d-flex justify-content-between mt-3 pt-3 border-top fs-5">
+                <span class="fw-bold">Total</span>
+                <span class="fw-bold text-primary">{{ cartService.totalPrice() | currency }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
