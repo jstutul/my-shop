@@ -22,13 +22,15 @@
             "assets": [
               {
                 "glob": "**/*",
-                "input": "public"
+                "input": "./node_modules/@kolkov/angular-editor/assets/icons",
+                "output": "assets/ae-icons/"
               }
             ],
             "styles": [
               "./public/assets/css/style.css",
               "./node_modules/quill/dist/quill.snow.css", 
-              "./node_modules/quill/dist/quill.bubble.css"
+              "./node_modules/quill/dist/quill.bubble.css",
+              "./node_modules/@kolkov/angular-editor/themes/default.scss"
             ],
             "scripts": ["./public/assets/js/main.js"]
           },

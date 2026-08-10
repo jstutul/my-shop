@@ -7,22 +7,60 @@ import { ProductService } from '../../services/product.service';
 import { CategoryDto } from '../../models/category.model';
 import { Category } from '../../services/category.service';
 import { QuillModule } from 'ngx-quill'; 
-
+import { AngularEditorModule } from '@kolkov/angular-editor';
+import { AngularEditorConfig } from '@kolkov/angular-editor';
 declare var bootstrap: any;
 @Component({
   selector: 'app-products',
   standalone:true,
-  imports: [CurrencyPipe,ReactiveFormsModule,QuillModule,FormsModule],
+  imports: [CurrencyPipe,ReactiveFormsModule,QuillModule,FormsModule,AngularEditorModule],
   templateUrl: './products.html',
   styleUrl: './products.css',
 })
+
 export class Products {
   public baseImageUrl = environment.imageBaseUrl;  
   private formBuilder = inject(FormBuilder);
   private productService = inject(ProductService);
   private categoryService = inject(Category);
-
-
+  editorConfig: AngularEditorConfig = {
+    editable: true,
+      spellcheck: true,
+      height: 'auto',
+      minHeight: '0',
+      maxHeight: 'auto',
+      width: 'auto',
+      minWidth: '0',
+      translate: 'yes',
+      enableToolbar: true,
+      showToolbar: true,
+      placeholder: 'Enter text here...',
+      defaultParagraphSeparator: '',
+      defaultFontName: '',
+      defaultFontSize: '',
+      fonts: [
+        {class: 'arial', name: 'Arial'},
+        {class: 'times-new-roman', name: 'Times New Roman'},
+        {class: 'calibri', name: 'Calibri'},
+        {class: 'comic-sans-ms', name: 'Comic Sans MS'}
+      ],
+      customClasses: [
+      {
+        name: 'quote',
+        class: 'quote',
+      },
+      {
+        name: 'redText',
+        class: 'redText'
+      },
+      {
+        name: 'titleText',
+        class: 'titleText',
+        tag: 'h1',
+      },
+    ],
+};
+  
   products  = signal<ProductDto[]>([]);
   categories = signal<CategoryDto[]>([]);
   editingProduct = signal<ProductDto|null>(null);

@@ -298,7 +298,8 @@
                     </div>
                         <div class="col-md-12">
                             <label class="form-label">Description</label>
-                           <quill-editor class="w-100 h-50"
+                            <angular-editor formControlName="description" [config]="editorConfig"></angular-editor>
+                           <!-- <quill-editor class="w-100 h-50"
                             formControlName="description" 
                             [class.is-invalid]="productForm.get('description')?.invalid && productForm.get('description')?.touched"
                             [modules]="{
@@ -308,7 +309,7 @@
                                     ['link', 'clean']                
                                 ]
                             }">
-                        </quill-editor>
+                        </quill-editor> -->
                             @if (productForm.get('description')?.invalid && productForm.get('description')?.touched) {
                                 <div class="invalid-feedback">
                                 Description is required.

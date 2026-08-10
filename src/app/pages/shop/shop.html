@@ -40,7 +40,7 @@
           <div class="form-check mb-2">
           <input class="form-check-input" type="radio" name="category" [id]="'cat'+cat.id" 
           [checked]="selectedCategory()===cat.id" 
-          (change)="selectedCategory.set(cat.id);resetPage();"
+          (change)="selectedCategory.set((cat.id));resetPage();"
           />
           <label class="form-check-label" [for]="'cat'+cat.id">{{cat.name}}</label>
         </div>

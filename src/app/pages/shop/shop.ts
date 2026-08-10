@@ -30,7 +30,7 @@ export class Shop {
   searchQuery =signal('');
   selectedCategory = signal<number|null>(null);
   sortOrder=signal<'low-to-high'|'high-to-low'>('low-to-high')
-  maxPrice =signal<number>(1000);
+  maxPrice =signal<number>(100000);
   
   addToCart(product: ProductDto) {
     this.cartService.addToCart(product);
@@ -43,7 +43,7 @@ export class Shop {
     }
    
     if(this.selectedCategory()){
-      list = list.filter(p=>Number(p.categoryId) === this.selectedCategory());
+      list = list.filter(p=>Number(p.categoryId) === Number(this.selectedCategory()));
     }
 
     list = [...list].sort((a,b)=>{
@@ -52,6 +52,7 @@ export class Shop {
     
     const max = this.maxPrice();
     list = list.filter(p => p.price <= max);
+    console.log(list);
     return list;
   });
 
@@ -63,13 +64,11 @@ export class Shop {
     return this.filterProduct().slice(startIndex,startIndex+this.pageSize);
   })
 
-
-
-
   ngOnInit(){
     this.categoryService.getCategory().subscribe(cats => this.categories.set(cats));
     this.productService.getProductList().subscribe({
       next: (prods) => {
+        console.log(prods);
         this.allproducts.set(prods);
         this.isLoading.set(false);
       },
@@ -79,7 +78,7 @@ export class Shop {
     this.route.queryParams.subscribe(params => {
       const categoryId = params['cat'];
       if(categoryId){
-        this.selectedCategory.set(categoryId);
+        this.selectedCategory.set(Number(categoryId));
       }
     });
   }

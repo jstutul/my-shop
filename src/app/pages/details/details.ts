@@ -28,7 +28,7 @@ export class Details implements OnInit  {
   }
 
   incrementQty(){
-    this.quantity.update(q=>q<10?q+1:q)
+    this.quantity.update(q=>q<(this.product()?.stockQuantity??1)?q+1:q)
   }
   decrementQty(){
     this.quantity.update(q=>q>1?q-1:q)
@@ -81,7 +81,7 @@ export class Details implements OnInit  {
   onQuantityChange(event: Event) {
     const value = Number((event.target as HTMLInputElement).value);
     this.quantity.set(
-      Math.max(1, Math.min(value || 1, 10))
+      Math.max(1, Math.min(value || 1, this.product()?.stockQuantity??1))
     );
   }
   addToCart(){
