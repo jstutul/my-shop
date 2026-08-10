@@ -13,6 +13,7 @@ import { adminGuard } from './guard/admin-guard';
 import { AdminLayout } from './layout/admin-layout/admin-layout';
 import { App } from './app';
 import { Customer } from './layout/customer/customer';
+import {CustomerAdmin} from './admin/customer/customer';
 import { Products } from './admin/products/products';
 import { Categories } from './admin/categories/categories';
 import { Orders } from './admin/orders/orders';
@@ -57,6 +58,9 @@ export const routes: Routes = [
             {
                 path:'orders',
                 component:Orders
+            },{
+                path:'customers',
+                component:CustomerAdmin
             }
         ]
     },

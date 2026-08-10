@@ -1,1 +1,163 @@
-<p>customer works!</p>
+<div class="container-fluid">
+
+  <!-- Page Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+      <h4 class="fw-bold mb-1">Customers</h4>
+      <p class="text-muted mb-0">
+        Manage your store customer
+      </p>
+    </div>
+    <button
+      type="button"
+      class="btn btn-primary" (click)="openAddCustomer()">
+      <i class="bi bi-plus-lg me-2"></i>
+      Add Customer
+    </button>
+  </div>
+
+
+  <!-- Product Card -->
+  <div class="card border-0 shadow-sm">
+    <div class="table-responsive">
+      <table class="table align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th style="width:70px">#</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>User Name</th>
+            <th>Role Name</th>
+            <th>Email Address</th>
+            <th>Email Verified</th>
+            <th class="text-end">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+
+        @if (paginatedCustomer().length > 0) {
+            @for (customer of paginatedCustomer(); track customer.id; let i = $index) {
+              <tr>
+                <td>{{i+1}}</td>
+                <td>{{ customer.firstName }}</td>
+                <td>{{ customer.lastName }}</td>
+                <td>{{ customer.userName }}</td>
+                <td>{{ customer.roles }}</td>
+                <td>{{ customer.emailAddress }}</td>
+                <td>{{ customer.emailConfirmed }}</td>
+                <td class="text-end">
+                  <div class="d-flex justify-content-end gap-2">
+                    <button
+                      class="btn btn-sm btn-outline-primary"
+                      title="Edit" 
+                       (click)="openEditCustomer(customer)">
+                      <i class="bi bi-pencil"></i>
+                    </button>
+                    <button
+                      class="btn btn-sm btn-outline-danger"
+                      title="Delete"
+                      (click)="deleteCustomer(customer.id)">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+        } @else {
+            <tr>
+              <td colspan="3">
+                <div class="text-center py-5">
+                  <i class="bi bi-box-seam display-5 text-muted"></i>
+                  <h6 class="mt-3">
+                    No Category found
+                  </h6>
+                  <p class="text-muted mb-3">
+                    Start by adding your first category.
+                  </p>
+                  <button
+                    class="btn btn-primary" (click)="openAddCustomer()"
+                    >
+                    <i class="bi bi-plus-lg me-2"></i>
+                    Add Category
+                  </button>
+                </div>
+              </td>
+            </tr>
+        }
+        </tbody>
+      </table>
+    </div>
+    <!-- Pagination -->
+    <div class="card-footer bg-white">
+      <div class="d-flex justify-content-between align-items-center">
+        <small class="text-muted">
+          Showing {{ customers().length }} products
+        </small>
+        <nav class="mt-5 d-flex justify-content-center">
+            <ul class="pagination">
+            <li class="page-item" [class.disabled]="currentPage()===1">
+                <button class="page-link" (click)="currentPage.set(currentPage()-1)">&laquo;</button>
+            </li>
+            <li class="page-item active">
+                <span class="page-link">{{currentPage()}}</span>
+            </li>
+            <li class="page-item" [class.disabled]="currentPage()>= totalPages()">
+                <button class="page-link" 
+                (click)="currentPage.set(currentPage() + 1)"
+                 [disabled]="currentPage() >= totalPages()">&raquo;</button>
+                </li>
+            </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- ================= PRODUCT MODAL ================= -->
+
+<div
+  class="modal fade"
+  id="customerModal"
+  tabindex="-1"
+  aria-labelledby="customerModalLabel"
+  aria-hidden="true">
+
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <!-- Header -->
+            <div class="modal-header">
+                <h5 class="modal-title" id="customerModalLabel">
+                {{ editingCustomer() ? 'Edit Customer' : 'Add Customer' }}
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <!-- Body -->
+            <div class="modal-body">
+
+                <form  [formGroup]="customerForm" (ngSubmit)="saveCustomer()" >
+                    <div class="row g-3">
+                        <div class="col-md-8">
+                            <label class="form-label">Category Name</label>
+                            <input type="text" class="form-control"
+                                formControlName="name"
+                                [class.is-invalid]="customerForm.get('name')?.invalid && customerForm.get('name')?.touched"
+                                placeholder="Enter category name"
+                            >
+                            @if (customerForm.get('name')?.touched && customerForm.get('name')?.invalid) 
+                            {
+                                <small class="text-danger">Category name is required</small>
+                            }
+                        </div>
+                        <div class="mb-3 text-center">
+                            <button type="button" class="btn btn-outline-secondary mx-2" (click)="closeModal()">Cancel</button>
+                            <button type="submit" class="btn btn-primary" >
+                                {{ editingCustomer() ? 'Update' : 'Save' }}
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
