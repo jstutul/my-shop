@@ -133,21 +133,67 @@
             </div>
             <!-- Body -->
             <div class="modal-body">
-
                 <form  [formGroup]="customerForm" (ngSubmit)="saveCustomer()" >
                     <div class="row g-3">
-                        <div class="col-md-8">
-                            <label class="form-label">Category Name</label>
+                        <div class="col-md-6">
+                            <label class="form-label">Email Adderess</label>
                             <input type="text" class="form-control"
-                                formControlName="name"
-                                [class.is-invalid]="customerForm.get('name')?.invalid && customerForm.get('name')?.touched"
-                                placeholder="Enter category name"
+                                formControlName="email"
+                                [class.is-invalid]="customerForm.get('email')?.invalid && customerForm.get('email')?.touched"
+                                placeholder="Enter email address"
                             >
-                            @if (customerForm.get('name')?.touched && customerForm.get('name')?.invalid) 
+                            @if (customerForm.get('email')?.touched && customerForm.get('email')?.invalid) 
                             {
-                                <small class="text-danger">Category name is required</small>
+                                <small class="text-danger">Customer email address is required</small>
                             }
                         </div>
+                        @if(editingCustomer()){
+                          <div class="col-md-6">
+                            <label class="form-label">Password</label>
+                            <input type="text" class="form-control"
+                                formControlName="password"
+                                [class.is-invalid]="customerForm.get('password')?.hasError('password') && customerForm.get('password')?.touched"
+                                placeholder="Enter your password"
+                            >
+                            @if (customerForm.get('password')?.touched && customerForm.get('password')?.invalid) 
+                            {
+                                <small class="text-danger">Customer password is required</small>
+                            }
+                        </div>
+                        }
+                        <div class="col-md-6">
+                            <label class="form-label">First Name</label>
+                            <input type="text" class="form-control"
+                                formControlName="firstName"
+                                [class.is-invalid]="customerForm.get('firstName')?.invalid && customerForm.get('firstName')?.touched"
+                                placeholder="Enter first name"
+                            >
+                            @if (customerForm.get('firstName')?.touched && customerForm.get('firstName')?.invalid) 
+                            {
+                                <small class="text-danger">Customer firstname is required</small>
+                            }
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">First Name</label>
+                            <input type="text" class="form-control"
+                                formControlName="lastName"
+                                [class.is-invalid]="customerForm.get('lastName')?.invalid && customerForm.get('lastName')?.touched"
+                                placeholder="Enter first name"
+                            >
+                            @if (customerForm.get('lastName')?.touched && customerForm.get('lastName')?.invalid) 
+                            {
+                                <small class="text-danger">Customer lastname is required</small>
+                            }
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Phone</label>
+                            <input type="text" class="form-control"
+                                formControlName="phoneNo"
+                                [class.is-invalid]="customerForm.get('phoneNo')?.invalid && customerForm.get('phoneNo')?.touched"
+                                placeholder="Enter phone no"
+                            >
+                        </div> 
+                        
                         <div class="mb-3 text-center">
                             <button type="button" class="btn btn-outline-secondary mx-2" (click)="closeModal()">Cancel</button>
                             <button type="submit" class="btn btn-primary" >

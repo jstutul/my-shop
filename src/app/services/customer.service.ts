@@ -16,4 +16,11 @@ export class CustomerService {
   deleteCustomer(id:string){
     return this.http.delete(this.baseUrl+'account/get-customers');
   }
+  addCustomer(model:Customer){
+    console.log(model);
+    return this.http.post(this.baseUrl+'account/add-customer',model);
+  }
+  updateCustomer (id:string,model:Customer){
+    return this.http.put(this.baseUrl+'account/edit-customer/'+id,model);
+  }
 }

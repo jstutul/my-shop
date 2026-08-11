@@ -2,6 +2,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Customer } from '../../models/customer.model';
 import { CustomerService } from '../../services/customer.service';
+import { minLength } from '@angular/forms/signals';
 declare var bootstrap: any;
 @Component({
   selector: 'app-customer',
@@ -18,7 +19,11 @@ export class CustomerAdmin {
   currentPage =signal(1);
   private modal:any;
   customerForm = this.formBuilder.group({
-    name: ['',Validators.required]
+    email: ['',[Validators.required, Validators.email]],
+    firstName :['',[Validators.required, Validators.minLength(3)]],
+    lastName :['',[Validators.required, Validators.minLength(3)]],
+    password : ['', [Validators.required, Validators.pattern(/^\d{6}$/)]],
+    phoneNo:['']
   });
   paginatedCustomer = computed(()=>{
     const startIndex =(this.currentPage()-1)*this.pageSize;
@@ -30,7 +35,15 @@ export class CustomerAdmin {
   });
   
   openEditCustomer(customer:Customer){
-
+    this.editingCustomer.set(customer);
+    this.customerForm.patchValue({
+      email: customer.emailAddress,
+      firstName: customer.firstName,
+      lastName: customer.lastName,
+      password: customer.password,
+      phoneNo : customer.phoneNo
+    });
+    this.openModal();
   }
   deleteCustomer(id:string){
     if (!confirm('Are you sure you want to delete this category?')) {
@@ -49,17 +62,57 @@ export class CustomerAdmin {
     })
   }
   saveCustomer(){
-    
+    if(this.customerForm.invalid){
+      this.customerForm.markAllAsTouched();
+      return;
+    }
+    if(this.editingCustomer()){
+      this.updateUser();
+    }else{
+      this.addUser();
+    }
   }
+  addUser(){
+      this.customerService.addCustomer(this.customerForm.value as Customer).subscribe({
+        next:(response:any)=>{
+          alert(response.message);
+          this.loadCustomer();
+          this.closeModal();
+        },error:(err)=>{
+          console.log(err);
+        }
+      })
+    }
+  
+    updateUser(){
+      const id = this.editingCustomer()!.id;
+      this.customerService.updateCustomer(id,this.customerForm.value as Customer).subscribe({
+        next:(response:any)=>{
+          this.loadCustomer();
+          alert(response.message);
+          this.closeModal();
+        },error:(err)=>{
+          console.log(err);
+        }
+      })
+    }
   ngOnInit(){
     this.loadCustomer();
   }
 
   openAddCustomer(){
-
+    this.editingCustomer.set(null);
+    this.customerForm.reset({
+      email: '',
+      firstName: '',
+      lastName: '',
+      password: '',
+      phoneNo:'',
+    });
+    this.openModal();
   }
   ngAfterViewInit(){
-    const element = document.getElementById('categoryModal');
+    const element = document.getElementById('customerModal');
     if (element) {
       this.modal = new bootstrap.Modal(element);
     }
