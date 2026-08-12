@@ -3,6 +3,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import { ProductDto } from '../models/product.model';
 import { Observable, tap } from 'rxjs';
 import { environment } from '../../environments/environment.development';
+import { StockResponse } from '../models/stock.model';
 
 @Injectable({
   providedIn: 'root',
@@ -47,5 +48,15 @@ export class ProductService {
 
   deleteProduct(id: string): Observable<void> {
     return this.http.delete<void>(this.baseUrl+'product/delete-product/'+id);
+  }
+
+  getStockList(){
+    return this.http.get<StockResponse[]>(this.baseUrl+'inventory/stocklist')
+  }
+  addStock(model:any){
+    return this.http.post(this.baseUrl+'inventory/stock-in',model)
+  }
+  removeStock(model:any){
+    return this.http.post(this.baseUrl+'inventory/stock-out',model)
   }
 }

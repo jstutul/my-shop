@@ -17,6 +17,7 @@ import {CustomerAdmin} from './admin/customer/customer';
 import { Products } from './admin/products/products';
 import { Categories } from './admin/categories/categories';
 import { Orders } from './admin/orders/orders';
+import { Stock } from './admin/stock/stock';
 
 export const routes: Routes = [
     {
@@ -58,9 +59,14 @@ export const routes: Routes = [
             {
                 path:'orders',
                 component:Orders
-            },{
+            },
+            {
                 path:'customers',
                 component:CustomerAdmin
+            },
+            {
+                path:'stock',
+                component:Stock
             }
         ]
     },

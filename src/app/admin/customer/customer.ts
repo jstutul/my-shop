@@ -2,7 +2,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Customer } from '../../models/customer.model';
 import { CustomerService } from '../../services/customer.service';
-import { minLength } from '@angular/forms/signals';
+
 declare var bootstrap: any;
 @Component({
   selector: 'app-customer',
