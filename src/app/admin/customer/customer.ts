@@ -22,7 +22,7 @@ export class CustomerAdmin {
     email: ['',[Validators.required, Validators.email]],
     firstName :['',[Validators.required, Validators.minLength(3)]],
     lastName :['',[Validators.required, Validators.minLength(3)]],
-    password : ['', [Validators.required, Validators.pattern(/^\d{6}$/)]],
+    password : [''],
     phoneNo:['']
   });
   paginatedCustomer = computed(()=>{
@@ -40,7 +40,6 @@ export class CustomerAdmin {
       email: customer.emailAddress,
       firstName: customer.firstName,
       lastName: customer.lastName,
-      password: customer.password,
       phoneNo : customer.phoneNo
     });
     this.openModal();
@@ -62,6 +61,9 @@ export class CustomerAdmin {
     })
   }
   saveCustomer(){
+    if (!this.editingCustomer() && !this.customerForm.get('password')?.value) {
+      this.customerForm.get('password')?.setErrors({ required: true });
+    }
     if(this.customerForm.invalid){
       this.customerForm.markAllAsTouched();
       return;
