@@ -4,36 +4,19 @@
 
         <div class="col-md-6 col-xl-3">
           <div class="stat-card">
-
-            <div class="stat-icon">
-              <i class="bi bi-currency-dollar"></i>
-            </div>
-
-            <div>
+            <div class="text-center">
               <small>Total Sales</small>
-              <h3>$24,580</h3>
-              <span class="text-success">
-                <i class="bi bi-arrow-up"></i> 12.5%
-              </span>
+              <h3>{{data().totalSale|currency}}</h3>
             </div>
-
           </div>
         </div>
 
 
         <div class="col-md-6 col-xl-3">
           <div class="stat-card">
-
-            <div class="stat-icon">
-              <i class="bi bi-cart-check"></i>
-            </div>
-
-            <div>
+            <div class="text-center">
               <small>Total Orders</small>
-              <h3>245</h3>
-              <span class="text-success">
-                <i class="bi bi-arrow-up"></i> 8.2%
-              </span>
+              <h3>{{data().totalOrder}}</h3>
             </div>
 
           </div>
@@ -42,17 +25,9 @@
 
         <div class="col-md-6 col-xl-3">
           <div class="stat-card">
-
-            <div class="stat-icon">
-              <i class="bi bi-box-seam"></i>
-            </div>
-
-            <div>
+            <div class="text-center">
               <small>Products</small>
-              <h3>128</h3>
-              <span class="text-muted">
-                Active products
-              </span>
+               <h3>{{data().totalProduct}}</h3>
             </div>
 
           </div>
@@ -61,17 +36,9 @@
 
         <div class="col-md-6 col-xl-3">
           <div class="stat-card">
-
-            <div class="stat-icon">
-              <i class="bi bi-people"></i>
-            </div>
-
-            <div>
+            <div class="text-center">
               <small>Customers</small>
-              <h3>542</h3>
-              <span class="text-success">
-                <i class="bi bi-arrow-up"></i> 5.4%
-              </span>
+               <h3>{{data().totalCustomer}}</h3>
             </div>
 
           </div>
@@ -135,32 +102,23 @@
             </div>
 
             <div class="order-status">
-
+              <div class="status-row">
+                <span><span class="status-dot pending"></span>Pending</span>
+                <strong>{{data().orderStatus.pending}}</strong>
+              </div>
+              <div class="status-row">
+                <span><span class="status-dot delivered"></span>Confirmed</span>
+                <strong>{{data().orderStatus.confirmed}}</strong>
+              </div>
               <div class="status-row">
                 <span>
-                  <span class="status-dot pending"></span>
-                  Pending
-                </span>
-
-                <strong>18</strong>
+                  <span class="status-dot processing"></span>Processing</span>
+                  <strong>{{data().orderStatus.processing}}</strong>
               </div>
 
               <div class="status-row">
-                <span>
-                  <span class="status-dot processing"></span>
-                  Processing
-                </span>
-
-                <strong>25</strong>
-              </div>
-
-              <div class="status-row">
-                <span>
-                  <span class="status-dot delivered"></span>
-                  Delivered
-                </span>
-
-                <strong>185</strong>
+                <span><span class="status-dot delivered"></span> Delivered</span>
+                <strong>{{data().orderStatus.delivered}}</strong>
               </div>
 
               <div class="status-row">
@@ -168,8 +126,7 @@
                   <span class="status-dot cancelled"></span>
                   Cancelled
                 </span>
-
-                <strong>17</strong>
+                <strong>{{data().orderStatus.cancelled}}</strong>
               </div>
 
             </div>
@@ -195,10 +152,7 @@
 
               <a
                 routerLink="/admin/orders"
-                class="btn btn-sm btn-outline-primary">
-
-                View All
-
+                class="btn btn-sm btn-outline-primary">View All
               </a>
 
             </div>
@@ -219,43 +173,25 @@
                 </thead>
 
                 <tbody>
-
-                  <tr>
-                    <td class="fw-semibold">#0808261001</td>
-                    <td>John Doe</td>
-                    <td>Aug 08, 2026</td>
-                    <td>$125.50</td>
-                    <td>
-                      <span class="badge bg-success-subtle text-success">
-                        Delivered
-                      </span>
-                    </td>
-                  </tr>
-
-                  <tr>
-                    <td class="fw-semibold">#0808261002</td>
-                    <td>Alex Johnson</td>
-                    <td>Aug 08, 2026</td>
-                    <td>$85.00</td>
-                    <td>
-                      <span class="badge bg-warning-subtle text-warning">
-                        Pending
-                      </span>
-                    </td>
-                  </tr>
-
-                  <tr>
-                    <td class="fw-semibold">#0708261003</td>
-                    <td>Michael Smith</td>
-                    <td>Aug 07, 2026</td>
-                    <td>$245.99</td>
-                    <td>
-                      <span class="badge bg-primary-subtle text-primary">
-                        Processing
-                      </span>
-                    </td>
-                  </tr>
-
+                  @if(data()){
+                    @for(ord of data().orders;track ord.orderNo){
+                      <tr>
+                        <td class="fw-semibold">{{ord.orderNo}}</td>
+                        <td>{{ord.customerName}}</td>
+                        <td>{{ord.orderDate | date:'dd MMM yyyy, hh:mm a'}}</td>
+                        <td>{{ord.totalAmount|currency}}</td>
+                        <td>
+                          <span [class]="getStatusClass(ord.status)">
+                            {{ ord.status }}
+                          </span>
+                        </td>
+                      </tr>
+                    }
+                  }@else {
+                    <tr>
+                      <td colspan="5">No Order Found</td>
+                    </tr>
+                  }
                 </tbody>
 
               </table>
